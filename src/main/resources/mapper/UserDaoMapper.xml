@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Author: pxz
+  Email: buffll@foxmail.com
+  2021-03-09 17:07
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buffll.dao.UserDao">
+	
+	<cache eviction="LRU" flushInterval="300000" readOnly="false" size="256" />
+	
+	<!--根据id获取用户的头像和昵称-->
+	<select id="findAvatarAndNickname" resultType="com.buffll.entity.User">
+		SELECT u.id, u.nickname, u.avatar
+		FROM t_user u
+		WHERE u.id = #{userId}
+	</select>
+	
+	<!--根据用户名和密码查询数据库-->
+	<select id="findByUsernameAndPassword" resultType="com.buffll.entity.User">
+		SELECT *
+		FROM t_user
+		WHERE username = #{username}
+			AND password = #{password}
+	</select>
+	
+	<!--修改密码-->
+	<update id="changePassword">
+		UPDATE t_user
+		SET password = #{password}
+		WHERE username = #{username}
+	</update>
+</mapper>

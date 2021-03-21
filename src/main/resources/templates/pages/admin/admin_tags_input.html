@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+  author pxz
+  email buffll@foxmail.com
+-->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="commons/admin_fragments :: head(~{::title})">
+    <title>新增标签</title>
+  </head>
+  <body>
+
+    <div th:replace="commons/admin_fragments :: navigation(3)"></div>
+    <div class="ui attached pointing menu">
+      <div class="ui container">
+        <div class="right menu">
+          <a th:href="@{admin/tags/input}" class="teal active item">新增标签</a>
+          <a th:href="@{admin/tags}" class="teal item">标签列表</a>
+        </div>
+      </div>
+    </div>
+  
+    <!--中间内容-->
+    <div  class="m-container-small m-padded-tb-big">
+      <div class="ui container">
+        <form method="post" th:object="${tag}"
+              th:action="*{id}==null ? @{/admin/tags} : @{/admin/tags/{id}(id=*{id})} " class="ui form">
+          <input type="hidden" name="id" th:value="*{id}">
+          <div class=" field">
+            <div class="ui left labeled input">
+              <label class="ui teal basic label">标签名称</label>
+              <input type="text" name="name" placeholder="标签名称" th:value="*{name}" >
+            </div>
+          </div>
+  
+          <div class="ui error message"></div>
+          <th:block>
+            <div class="ui negative message" th:if="${#fields.hasErrors('name')}">
+              <i class="close icon"></i>
+              <div class="header">添加失败</div>
+              <p th:errors="*{name}"></p>
+            </div>
+          </th:block>
+          
+          <div class="ui right aligned container">
+            <button type="button" class="ui button" onclick="window.location.href='/admin/tags'">返回</button>
+            <button class="ui teal submit button">提交</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <br>
+    <br>
+
+    <div style="position: sticky;top:100%">
+      <div th:replace="commons/fragments :: footer"></div>
+    </div>
+    <div th:replace="commons/admin_fragments :: script"></div>
+    <script>
+      $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+      })
+  
+      $('.ui.dropdown').dropdown({
+        on : 'hover'
+      })
+  
+      $('.ui.form').form({
+        fields : {
+          title : {
+            identifier: 'name',
+            rules: [{
+              type : 'empty',
+              prompt: '请输入标签名称'
+            }]
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

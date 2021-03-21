@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+  author pxz
+  email buffll@foxmail.com
+-->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="commons/fragments :: head(~{::title})">
+    <title>关于我</title>
+  </head>
+
+  <body>
+    <!--导航-->
+    <div th:replace="commons/fragments :: navigation(5)"></div>
+
+    <!--中间内容-->
+    <div class="m-container m-padded-tb-big">
+      <div class="ui container">
+        <div class="ui stackable grid">
+          <div class="eleven wide column">
+            <div class="ui segment">
+              <img th:src="@{/img/my.png}" alt="" class="ui rounded image" style="height: 430px; width: 600px">
+            </div>
+          </div>
+
+          <div class="five wide column">
+            <div class="ui top attached segment">
+              <div class="ui header" style="text-align: center">关于我</div>
+            </div>
+
+            <div class="ui attached segment">
+              <p class="m-text">pxz，一个独立开发者，折腾在 0 和 1 世界的人；一个终身学习者，誓将学习无限循环. 希望结识可以共同成长的小伙伴.</p>
+              <p class="m-text">热爱编程，喜欢折腾，正在探索高效学习编程技术的方法...</p>
+            </div>
+
+            <div class="ui attached segment" style="text-align: center;">
+              <div class="ui orange basic left pointing label">编程</div>
+              <div class="ui orange basic left pointing label">写作</div>
+              <div class="ui orange basic left pointing label">思考</div>
+              <div class="ui orange basic left pointing label">运动</div>
+            </div>
+
+            <div class="ui attached segment" style="text-align: center;">
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">Java</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">SpringBoot</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">MyBatis</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">Redis</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">Linux</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">MySQL</div>
+              <div class="ui teal basic left pointing label m-margin-tb-tiny">...</div>
+            </div>
+
+            <!--联系图标-->
+            <div class="ui bottom attached segment" style="text-align: center;">
+              <a href="https://github.com/549017101" class="ui github circular icon button" target="_blank">
+                <i class="github icon"></i>
+              </a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a class="ui wechat circular icon button">
+                <i class="weixin icon"></i>
+              </a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a class="ui qq circular icon button" data-position="bottom center">
+                <i class="qq icon"></i>
+              </a>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <a class="ui email circular icon button">
+                <i class="envelope icon"></i>
+              </a>
+            </div>
+            <div class="ui wechat-qr flowing popup transition hidden">
+              <img th:src="@{/img/vx.png}" alt="" class="ui rounded image" style="width: 150px">
+            </div>
+            <div class="ui qq-qr flowing popup transition hidden">
+              <p style="text-align: center;">QQ: 767722843</p>
+<!--              <img th:src="@{/img/qq.png}" alt="" class="ui rounded image" style="width: 150px">-->
+            </div>
+            <div class="ui email-qr flowing popup transition hidden">
+              <span style="text-align: center;"> pcxyzz@Foxmail.com </span>
+            </div>
+            <div class="ui github-qr flowing popup transition hidden">
+              <p style="text-align: center;">https://github.com/549017101</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position: sticky;top:100%">
+      <div th:replace="commons/fragments :: footer"></div>
+    </div>
+    <div th:replace="commons/fragments :: script"></div>
+    <script>
+      //微信的悬浮窗
+      $('.wechat').popup({
+        popup: $('.wechat-qr'),
+        position: 'bottom center'
+      })
+
+      //QQ的悬浮窗
+      $('.qq').popup({
+        popup: $('.qq-qr'),
+        position: 'bottom center'
+      })
+
+      //邮箱的悬浮窗
+      $('.email').popup({
+        popup: $('.email-qr'),
+        position: 'bottom center'
+      })
+
+      //github的悬浮窗
+      // $('.github').popup({
+      //   popup: $('.github-qr'),
+      //   position: 'bottom center'
+      // });
+    </script>
+  </body>
+</html>

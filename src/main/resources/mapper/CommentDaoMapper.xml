@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Author: pxz
+  Email: buffll@foxmail.com
+  2021-03-10 8:44
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buffll.dao.CommentDao">
+	
+	<cache eviction="LRU" flushInterval="300000" readOnly="false" size="256" />
+	
+	<resultMap id="comment" type="com.buffll.entity.Comment">
+		<id property="id" column="cid" />
+		<result property="nickname" column="nickname" />
+		<result property="email" column="email" />
+		<result property="content" column="content" />
+		<result property="adminComment" column="admin_comment" />
+		<result property="avatar" column="avatar" />
+		<result property="createTime" column="create_time" />
+		<result property="blogId" column="blog_id" />
+		<result property="parentCommentId" column="parent_comment_id" />
+		<association property="blog" javaType="com.buffll.entity.Blog">
+			<id property="id" column="id" />
+		</association>
+	</resultMap>
+	
+	<!--新增评论-->
+	<insert id="saveComment" parameterType="com.buffll.entity.Comment">
+		INSERT INTO t_comment (avatar, blog_id, content, create_time, email, parent_comment_id, nickname, admin_comment)
+		VALUES (#{avatar}, #{blogId}, #{content}, #{createTime}, #{email}, #{parentCommentId}, #{nickname}, #{adminComment})
+	</insert>
+	
+	<!--删除评论-->
+	<delete id="deleteComment">
+		DELETE
+		FROM t_comment
+		WHERE id = #{id}
+	</delete>
+	
+	<!--根据博客id查询当前博客的总评论数-->
+	<select id="getCommentCountByBlogId" resultType="java.lang.Integer">
+		SELECT COUNT(id)
+		FROM t_comment
+		WHERE blog_id = #{blog_id}
+	</select>
+	
+	<!--获取评论数据,并根据创建时间倒序排序-->
+	<select id="getCommentByBlogId" resultMap="comment">
+		SELECT c.id cid,
+		       c.nickname,
+		       c.email,
+		       c.content,
+		       c.avatar,
+		       c.admin_comment,
+		       c.create_time,
+		       c.blog_id,
+		       c.parent_comment_id,
+		       b.id bid
+		FROM t_comment c,
+		     t_blog b
+		WHERE c.blog_id = b.id
+			AND c.blog_id = #{blogId}
+			AND c.parent_comment_id = #{blogParentId}
+		ORDER BY c.create_time
+	</select>
+	
+	<!--查询自我评论-->
+	<select id="findById" resultMap="comment">
+		SELECT c.id cid,
+		       c.nickname,
+		       c.email,
+		       c.content,
+		       c.avatar,
+		       c.admin_comment,
+		       c.create_time,
+		       c.blog_id,
+		       c.parent_comment_id
+		FROM t_comment c
+		WHERE c.id = #{Id}
+	</select>
+	
+	<!--根据父级评论id查询子评论对象-->
+	<select id="getSecondaryCommentBySelfId" resultMap="comment">
+		SELECT c.id cid,
+		       c.nickname,
+		       c.email,
+		       c.content,
+		       c.avatar,
+		       c.admin_comment,
+		       c.create_time,
+		       c.blog_id,
+		       c.parent_comment_id
+		FROM t_comment c
+		WHERE c.parent_comment_id = #{commentId}
+	</select>
+</mapper>

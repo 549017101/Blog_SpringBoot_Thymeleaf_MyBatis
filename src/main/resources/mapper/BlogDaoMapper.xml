@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Author: pxz
+  Email: buffll@foxmail.com
+  2021-03-10 10:16
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buffll.dao.BlogDao">
+	
+	<cache eviction="LRU" flushInterval="300000" readOnly="false" size="256" />
+	
+	<resultMap id="blogQueryVo" type="com.buffll.vo.BlogQueryVo">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="updateTime" column="update_time" />
+		<result property="recommend" column="recommend" />
+		<result property="published" column="published" />
+		<result property="typeId" column="type_id" />
+		<association property="type" javaType="com.buffll.entity.Type">
+			<id property="id" column="id" />
+			<result property="name" column="name" />
+		</association>
+	</resultMap>
+	
+	<resultMap id="firstPageBlogVo" type="com.buffll.vo.FirstPageBlogVo">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="firstPicture" column="first_picture" />
+		<result property="views" column="views" />
+		<result property="updateTime" column="update_time" />
+		<result property="description" column="description" />
+		<result property="typeName" column="name" />
+		<result property="recommend" column="recommend" />
+		<result property="published" column="published" />
+		<result property="nickname" column="nickname" />
+		<result property="avatar" column="avatar" />
+	</resultMap>
+	
+	<resultMap id="firstPageRecommendBlog" type="com.buffll.vo.FirstPageBlogVo">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="recommend" column="recommend" />
+	</resultMap>
+	
+	<resultMap id="blog" type="com.buffll.entity.Blog">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="content" column="content" />
+		<result property="flag" column="flag" />
+		<result property="views" column="views" />
+		<result property="updateTime" column="update_time" />
+		<result property="typeId" column="type_id" />
+		<result property="firstPicture" column="first_picture" />
+		<result property="shareStatement" column="share_statement" />
+		<result property="published" column="published" />
+		<result property="appreciation" column="appreciation" />
+		<result property="commentabled" column="commentabled" />
+		<result property="description" column="description" />
+		<result property="recommend" column="recommend" />
+		<result property="createTime" column="create_time" />
+		<result property="typeId" column="type_id" />
+		<result property="userId" column="user_id" />
+		<result property="tagIds" column="tag_ids" />
+		<association property="type" javaType="com.buffll.entity.Type">
+			<id property="id" column="typeid" />
+			<result property="name" column="typename" />
+		</association>
+		<association property="user" javaType="com.buffll.entity.User">
+			<id property="id" column="uid" />
+			<result property="nickname" column="nickname" />
+			<result property="avatar" column="avatar" />
+		</association>
+		<collection property="tags" ofType="com.buffll.entity.Tag">
+			<id property="id" column="tagid" />
+			<result property="name" column="tagname" />
+		</collection>
+	</resultMap>
+	
+	<!--根据id查询博客-->
+	<select id="getBlogById" resultType="com.buffll.entity.Blog">
+		SELECT *
+		FROM t_blog
+		WHERE id = #{id}
+	</select>
+	
+	<select id="getIndexBlog" resultMap="blog">
+		select b.id,
+		       b.title,
+		       b.first_picture,
+		       b.views,
+		       b.update_time,
+		       b.description,
+		       t.name typename,
+		       t.id   typeid,
+		       u.nickname,
+		       u.avatar
+		from t_blog b,
+		     t_type t,
+		     t_user u
+		where b.type_id = t.id
+			and u.id = b.user_id
+		order by b.update_time desc
+	</select>
+	
+	<!--查询文章管理列表的博客数据-->
+	<select id="getAllBlogQuery" resultMap="blogQueryVo">
+		SELECT b.id,
+		       b.title,
+		       b.update_time,
+		       b.recommend,
+		       b.published,
+		       b.type_id,
+		       t.id,
+		       t.name
+		FROM t_blog b
+			     LEFT OUTER JOIN
+		     t_type t ON b.type_id = t.id
+		ORDER BY b.update_time DESC
+	</select>
+	
+	<!--获取项目首页显示的博客列表-->
+	<select id="getFirstPageBlog" resultMap="firstPageBlogVo">
+		select b.id,
+		       b.title,
+		       b.first_picture,
+		       b.views,
+		       b.update_time,
+		       b.description,
+		       b.recommend,
+		       b.published,
+		       t.name,
+		       u.nickname,
+		       u.avatar
+		from t_blog b,
+		     t_type t,
+		     t_user u
+		where b.type_id = t.id
+			and u.id = b.user_id
+			and b.published = 1
+		order by b.update_time desc
+	</select>
+	
+	<!--获取项目首页展示的推荐博客列表-->
+	<select id="getFirstPageRecommendBlog" resultMap="firstPageRecommendBlog">
+		SELECT b.id, b.title, b.recommend
+		FROM t_blog b
+		WHERE b.recommend = 1 AND b.published = 1
+		ORDER BY b.update_time DESC LIMIT 6
+	</select>
+	
+	<select id="getBlogByTypeId" resultMap="blog">
+		SELECT b.id,
+		       b.title,
+		       b.first_picture,
+		       b.views,
+		       b.update_time,
+		       b.description,
+		       t.name     typename,
+		       t.id       typeid,
+		       u.id       uid,
+		       u.nickname nickname,
+		       u.avatar   avatar
+		FROM t_blog b,
+		     t_type t,
+		     t_user u
+		WHERE b.type_id = t.id
+			AND u.id = b.user_id
+			AND b.type_id = #{typeId}
+		ORDER BY b.update_time DESC
+	</select>
+	
+	<select id="getBlogByTagId" resultMap="blog">
+		SELECT b.id,
+		       b.title,
+		       b.first_picture,
+		       b.views,
+		       b.update_time,
+		       b.description,
+		       t.name  typename,
+		       t.id    typeid,
+		       t1.name tagname,
+		       t1.id   tagid,
+		       u.id    uid,
+		       u.nickname,
+		       u.avatar
+		FROM t_blog b,
+		     t_type t,
+		     t_user u,
+		     t_blog_tags tb,
+		     t_tag t1
+		WHERE b.type_id = t.id
+			AND u.id = b.user_id
+			AND tb.blogs_id = b.id
+			AND tb.tags_id = t1.id
+			AND t1.id = #{tagId}
+		ORDER BY b.update_time DESC
+	</select>
+	
+	<!--查询所有博客的年份,返回一个字符串类型的List-->
+	<select id="getYearForBlogs" resultType="java.lang.String">
+		SELECT date_format(b.create_time, '%Y') AS years
+		FROM t_blog b
+		GROUP BY years
+		ORDER BY years DESC
+	</select>
+	
+	<!--根据指定年份查询博客-->
+	<select id="getBlogByYear" resultType="com.buffll.entity.Blog">
+		SELECT b.id, b.title, b.create_time, b.flag
+		FROM t_blog b
+		WHERE (SELECT date_format(b.create_time, '%Y')) = #{year}
+	</select>
+	
+	<!--获取首页展示的推荐博客-->
+	<select id="getAllRecommendBlog" resultMap="blog">
+		SELECT id, title, recommend
+		FROM t_blog
+		ORDER BY update_time DESC LIMIT 6
+	</select>
+	
+	<!--获取底部推荐的博客(取最新的三条数据)-->
+	<select id="getFooterRecommendBlog" resultType="com.buffll.entity.Blog">
+		SELECT b.id, b.title
+		FROM t_blog b
+		WHERE b.recommend = 1
+		ORDER BY b.update_time DESC
+		LIMIT 3
+	</select>
+	
+	<!--获取博客总条数-->
+	<select id="countBlog" resultType="java.lang.Integer">
+		SELECT count(b.id)
+		FROM t_blog b
+	</select>
+	
+	<!--全局搜索-->
+	<select id="searchBlog" resultMap="firstPageBlogVo">
+		<bind name="query" value="'%' + query + '%'" />
+		select b.id,b.title,b.first_picture, b.views,b.update_time,b.description,b.type_id,
+		t.name , u.nickname, u.avatar
+		from t_blog b, t_type t,t_user u
+		where b.type_id = t.id and u.id = b.user_id and (b.title like #{query} or b.content like #{query} or
+		b.description like #{query})
+		order by b.update_time desc
+	</select>
+	
+	<!--搜索博客(后台管理搜索)-->
+	<select id="searchByTitleOrTypeOrRecommend" parameterType="com.buffll.vo.SearchBlogVo" resultMap="blogQueryVo">
+		<bind name="pattern" value="'%' + title + '%'" />
+		select b.id,b.title,b.published,b.update_time,b.recommend,b.type_id,t.id,t.name from t_blog b ,t_type t
+		<where>
+			<if test="1 == 1">
+				b.type_id = t.id
+			</if>
+			<if test="typeId != null">
+				and b.type_id = #{typeId}
+			</if>
+			<if test="recommend == 1">
+				and b.recommend = #{recommend}
+			</if>
+			<if test="title != null">
+				and b.title like #{pattern}
+			</if>
+		</where>
+	</select>
+	
+	<!--根据博客id获取博客的首图地址-->
+	<select id="getFirstPictureByBlogId" resultType="java.lang.String">
+		SELECT b.first_picture FROM t_blog b WHERE b.id = #{blogId}
+	</select>
+	
+	<!--新增博客-->
+	<insert id="saveBlog">
+		INSERT INTO t_blog (id, title, content, first_picture, flag,
+		views, appreciation, share_statement, commentabled, published,
+		recommend, create_time, update_time, type_id, user_id, description)
+		VALUES (#{id}, #{title}, #{content}, #{firstPicture}, #{flag}, #{views}, #{appreciation},
+		#{shareStatement}, #{commentabled}, #{published}, #{recommend}, #{createTime},
+		#{updateTime}, #{typeId}, #{userId}, #{description})
+		
+		<!--selectKey用来获取自增的主键-->
+		<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<!--修改博客-->
+	<update id="updateBlog">
+		UPDATE t_blog
+		SET published       = #{published},
+		    flag            = #{flag},
+		    title           = #{title},
+		    content         = #{content},
+		    type_id         = #{typeId},
+		    first_picture   = #{firstPicture},
+		    description     = #{description},
+		    recommend       = #{recommend},
+		    share_statement = #{shareStatement},
+		    appreciation    = #{appreciation},
+		    commentabled    = #{commentabled},
+		    update_time     = #{updateTime},
+		    create_time     = #{createTime},
+		    views           = #{views},
+		    user_id         = #{userId}
+		where id = #{id};
+	</update>
+	
+	<!--删除博客-->
+	<delete id="deleteBlog">
+		DELETE
+		FROM t_blog
+		WHERE id = #{id}
+	</delete>
+	
+	<!--更新浏览量-->
+	<update id="updateViews">
+		UPDATE t_blog b
+		SET b.views = b.views + 1
+		WHERE b.id = #{id}
+	</update>
+</mapper>

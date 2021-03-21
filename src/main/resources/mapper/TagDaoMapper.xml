@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Author: pxz
+  Email: buffll@foxmail.com
+  2021-03-10 8:07
+-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+                        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buffll.dao.TagDao">
+	
+	<cache eviction="LRU" flushInterval="300000" readOnly="false" size="256" />
+	
+	<!--每个Tag类保存自己标签内的blog数（List<blogs>）-->
+	<resultMap id="tags" type="com.buffll.entity.Tag">
+		<id property="id" column="tid" />
+		<result property="name" column="name" />
+		<collection property="blogs" ofType="com.buffll.entity.Blog">
+			<id property="id" column="bid" />
+			<result property="title" column="title" />
+		</collection>
+	</resultMap>
+	
+	<!--根据id获取标签-->
+		<select id="getTagById" resultType="com.buffll.entity.Tag">
+			SELECT id, name
+			FROM t_tag
+			WHERE id = #{id}
+		</select>
+	
+	<!--根据名称查找标签-->
+	<select id="getTagByName" resultType="com.buffll.entity.Tag">
+		SELECT id, name
+		FROM t_tag
+		WHERE name = #{name}
+	</select>
+	
+	<!--获取所有标签,返回标签的集合-->
+	<select id="getAllTags" resultType="com.buffll.entity.Tag">
+		SELECT t.id, name
+		FROM t_tag t
+	</select>
+	
+	<!--通过多个id值的集合获取标签-->
+	<select id="getAllTagsByIds" resultType="com.buffll.entity.Tag">
+		SELECT t.id, t.name
+		FROM t_tag t
+		WHERE t.id IN
+		<foreach collection="tagIds" item="tagId" separator="," open="(" close=")">
+			#{tagId}
+		</foreach>
+	</select>
+	
+	<!--通过博客id查询对应的标签集合-->
+	<select id="getTagsByBlogId" resultType="com.buffll.vo.BlogAndTagVo">
+		SELECT bt.blogs_id, bt.tags_id, t.id, t.name
+		FROM t_blog_tags bt
+			     INNER JOIN t_tag t ON bt.tags_id = t.id
+		WHERE bt.blogs_id = #{blogId}
+	</select>
+	
+	<!--新增标签-->
+	<insert id="saveTag">
+		INSERT INTO t_tag (id, name)
+		VALUES (#{id}, #{name})
+	</insert>
+	
+	<!--对博客新增(或修改)标签-->
+	<insert id="saveTagAboutBlog">
+		INSERT INTO t_blog_tags (blogs_id, tags_id)
+		VALUES (#{blogsId}, #{tagsId})
+	</insert>
+	
+	<!--修改标签-->
+	<update id="updateTag" parameterType="com.buffll.entity.Tag">
+		UPDATE t_tag
+		SET name = #{name}
+		WHERE id = #{id}
+	</update>
+	
+	<!--删除标签-->
+	<delete id="deleteTag">
+		DELETE
+		FROM t_tag
+		WHERE id = #{id}
+	</delete>
+	
+	<!--根据博客id删除所关联的标签-->
+	<delete id="deleteTagAboutBlog">
+		DELETE FROM t_blog_tags WHERE blogs_id = #{blogsId}
+	</delete>
+	
+	<select id="getBlogTag" resultMap="tags">
+		<!--由于是多对多，所以三个表联合查询-->
+		select t.id tid, t.name, b.id bid, b.title
+		from t_tag t, t_blog b, t_blog_tags bt
+		where t.id = bt.tags_id and b.id = bt.blogs_id AND b.published = 1
+	</select>
+</mapper>

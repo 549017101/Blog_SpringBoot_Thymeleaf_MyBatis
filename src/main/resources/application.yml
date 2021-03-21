@@ -1,0 +1,18 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    
+spring:
+  thymeleaf:
+    cache: false  #关闭thymeleaf缓存
+    mode: HTML
+  profiles:
+    active: prod
+    
+pagehelper:
+  helper-dialect: mysql
+  params: count=countSql
+  reasonable: true
+  supportMethodsArguments: true
+    
+comment.avatar: /img/photo/default.jpg  #评论默认的头像

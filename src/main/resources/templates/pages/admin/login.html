@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+  author pxz
+  email buffll@foxmail.com
+-->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="commons/admin_fragments :: head(~{::title})">
+    <title>登录</title>
+  </head>
+  <body>
+    <div class="m-container-small m-padded-tb-massive"
+         style="max-width: 30em !important; padding-top: 15em !important;">
+      <div class="ur container">
+        <div class="ui middle aligned center aligned grid">
+          <div class="column">
+            <h2 class="ui teal image header">
+              <div class="content">后台登录</div>
+            </h2>
+            <form class="ui large form" method="post" th:action="@{/admin/login}">
+              <div class="ui  segment">
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="user icon"></i>
+                    <input type="text" name="username" placeholder="用户名">
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="ui left icon input">
+                    <i class="lock icon"></i>
+                    <input type="password" name="password" placeholder="密码">
+                  </div>
+                </div>
+  
+                <div class="field">
+                  <div class="ui left icon input" style="float: left; width: 65%">
+                    <i class="edit outline icon"></i>
+                    <input type="text" name="scode" placeholder="验证码">
+                  </div>
+                  <div >
+                    <img style="position: relative" id="num" th:src="@{/admin/captcha/code}" />
+                    <a style="position: absolute; left: 385px;margin-top: 10px" href="javascript:" onclick="document.getElementById('num').src='/admin/captcha/code?' + (new Date()).getTime()">
+                      <i class="redo icon"></i>
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="ui two bottom attached buttons">
+                  <div class="ui primary basic submit button">登&nbsp;&nbsp;录</div>
+                  <div class="ui teal basic button" onclick="window.location.href='/'">返&nbsp;&nbsp;回</div>
+                </div>
+              </div>
+          
+              <div class="ui error mini message"></div>
+              <div class="ui mini negative message"
+                   th:unless="${#strings.isEmpty(message)}" th:text="${message}">
+              </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div th:replace="commons/admin_fragments :: script"></div>
+    <script>
+      $('.ui.form').form({
+        fields: {
+          username: {
+            identifier: 'username',
+            rules: [{
+              type: 'empty',
+              prompt: '请输入用户名'
+            }]
+          },
+          password: {
+            identifier: 'password',
+            rules: [{
+              type: 'empty',
+              prompt: '请输入密码'
+            }]
+          },
+          scode: {
+            identifier: 'scode',
+            rules: [{
+              type: 'empty',
+              prompt: '请输入验证码'
+            }]
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

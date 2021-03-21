@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+  author pxz
+  email buffll@foxmail.com
+-->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+  <head th:replace="commons/fragments :: head(~{::title})">
+    <title>错误页面</title>
+  </head>
+
+  <body>
+    <div th:replace="commons/fragments :: navigation(0)"></div>
+    
+    <div class="m-container-small m-padded-tb-massive">
+      <div class="ui error message m-padded-tb-huge" style="margin-top: 125px;">
+        <div class="ui contianer">
+          <h2>错误</h2>
+          <p>对不起，服务异常，请联系管理员</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <!--这个div中的内容用来显示异常信息,但不会输出在页面上,而是在网页源代码中可以看到,这样就不需要去服务器上查看日志了-->
+      <div th:utext="'&lt;!--'" th:remove="tag"></div>
+      <div th:utext="'Failed Request URL : ' + ${url}" th:remove="tag"></div>
+      <div th:utext="'Exception message : ' + ${exception.message}" th:remove="tag"></div>
+      <ul th:remove="tag">
+        <li th:each="st : ${exception.stackTrace}" th:remove="tag">
+          <span th:utext="${st}" th:remove="tag"></span>
+        </li>
+      </ul>
+      <div th:utext="'--&gt;'" th:remove="tag"></div>
+    </div>
+    <br>
+    <br>
+
+    <div style="position: sticky;top:100%">
+      <div th:replace="commons/fragments :: footer"></div>
+    </div>
+    <div th:replace="commons/fragments :: script"></div>
+  </body>
+</html>

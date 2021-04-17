@@ -15,10 +15,12 @@
 	<title th:replace="${title}"></title>
 	<link rel="shortcut icon" th:href="@{/img/favicon.ico}" />
 	<link href="https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+	<!--
 	<link rel="stylesheet" th:href="@{/css/typo.css}">
 	<link rel="stylesheet" th:href="@{/css/animate.css}">
 	<link rel="stylesheet" th:href="@{/lib/prism/prism.css}">
 	<link rel="stylesheet" th:href="@{/lib/tocbot/tocbot.css}">
+	-->
 	<link rel="stylesheet" th:href="@{/css/me.css}">
 </head>
 
@@ -59,9 +61,6 @@
 			</div>
 		</div>
 	</div>
-	<a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
-		<i class="sidebar icon"></i>
-	</a>
 </nav>
 
 <!----------------------公共底部---------------------->
@@ -164,6 +163,7 @@
 	<!--semantic-ui 也需要依赖jquery-->
 	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	<script src="https://cdn.bootcdn.net/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+	
 	<script th:inline="javascript">
 		$('.menu.toggle').click(function () {
 			$('.m-item').toggleClass('m-mobile-hide')

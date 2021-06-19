@@ -50,7 +50,8 @@ mybatis:
   mapper-locations: classpath:/mapper/**.xml
   configuration:
     map-underscore-to-camel-case: true #驼峰
-  
+    cache-enabled: true #开启二级缓存
+
 # 文件上传路径:
 firstPicture.dir: /usr/local/static/upload/FirstPicture/
 
